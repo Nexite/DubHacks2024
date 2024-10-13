@@ -30,6 +30,10 @@ interface AccessoriesProps {
 const Accessories: React.FC<AccessoriesProps> = ({ categories, diamonds, onPurchase, inventory, onEquip }) => {
     const [activeCategory, setActiveCategory] = useState(categories[0].name);
     const [isOpen, setIsOpen] = useState(true);
+    categories = categories.map(category => ({
+        ...category,
+        items: [...category.items].sort((a, b) => a.price - b.price)
+    }));
 
     const isItemOwned = (itemId: string) => inventory.some(item => item.id === itemId);
     const isItemEquipped = (itemId: string) => inventory.some(item => item.id === itemId && item.equipped);

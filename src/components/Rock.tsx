@@ -18,13 +18,6 @@ const Rock: React.FC<{ inventory: InventoryItem[]; shopItems: ShopItem[] }> = ({
     return (
         <div className="flex-grow relative mb-4">
             <div className="rock-container">
-                {/* <Image
-                    src="/rock.png"
-                    alt="A picture of a rock"
-                    layout="fill"
-                    objectFit="contain"
-                    className="rounded-lg rock-sway"
-                /> */}
                 {equippedItemImages.map((imageUrl, index) => (
                     <Image
                         key={index}

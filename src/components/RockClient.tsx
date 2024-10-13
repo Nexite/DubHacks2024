@@ -37,12 +37,6 @@ export default function RockClient() {
 
     const shopCategories = [
         {
-            name: "bodies",
-            items: [
-                {id: "minion", name: "Minion", price: 1000, imageUrl: "/bodies/minion.png", category: "bodies"}
-            ]
-        },
-        {
             name: "hats",
             items: [
                 {id: "beanie", name: "Beanie", price: 250, imageUrl: "/hats/beanie.png", category: "hats"},
@@ -50,7 +44,17 @@ export default function RockClient() {
                 {id: "bow_red", name: "Red Bow", price: 200, imageUrl: "/hats/bow_red.png", category: "hats"},
                 {id: "fedora", name: "Fedora", price: 300, imageUrl: "/hats/fedora.png", category: "hats"},
                 {id: "halo", name: "Halo", price: 500, imageUrl: "/hats/halo.png", category: "hats"},
-                {id: "minion_hair", name: "Minion", price: 1000, imageUrl: "/hats/minion_hair.png", category: "hats"}
+                {id: "minion_hair", name: "Minion", price: 1000, imageUrl: "/hats/minion_hair.png", category: "hats"},
+                {id: "raised_eyebrows", name: "Raised Eyebrows", price: 175, imageUrl: "/hats/raised_eyebrow.png", category: "hats"}
+            ]
+        },
+        {
+            name: "clothes",
+            items: [
+                {id: "suit", name: "Suit", price: 450, imageUrl: "/clothes/suit.png", category: "clothes"},
+                {id: "furry_coat", name: "Fur Coat", price: 400, imageUrl: "/clothes/furry_coat.png", category: "clothes"},
+                {id: "hoodie", name: "Hoodie", price: 300, imageUrl: "/clothes/hoodie.png", category: "clothes"},
+                {id: "minion_overalls", name: "Minion", price: 1000, imageUrl: "/clothes/minion_overalls.png", category: "clothes"},
             ]
         },
         {
@@ -60,7 +64,8 @@ export default function RockClient() {
                 {id: "eyes_brown", name: "Brown Eyes", price: 50, imageUrl: "/eyes/eyes_brown.png", category: "eyes"},
                 {id: "eyes_closed", name: "Closed Eyes", price: 75, imageUrl: "/eyes/eyes_closed.png", category: "eyes"},
                 {id: "eyes_green", name: "Green Eyes", price: 50, imageUrl: "/eyes/eyes_green.png", category: "eyes"},
-                {id: "eyes_bloodshot", name: "Bloodshot", price: 75, imageUrl: "/eyes/eyes_bloodshot.png", category: "eyes"}
+                {id: "eyes_bloodshot", name: "Bloodshot", price: 75, imageUrl: "/eyes/eyes_bloodshot.png", category: "eyes"},
+                {id: "minion_eye", name: "Minion", price: 1000, imageUrl: "/eyes/minion_eye.png", category: "eyes"}
             ]
         },
         {
@@ -75,14 +80,11 @@ export default function RockClient() {
             ]
         },
         {
-            name: "clothes",
+            name: "bodies",
             items: [
-                {id: "suit", name: "Suit", price: 450, imageUrl: "/clothes/suit.png", category: "clothes"},
-                {id: "furry_coat", name: "Fur Coat", price: 400, imageUrl: "/clothes/furry_coat.png", category: "clothes"},
-                {id: "hoodie", name: "Hoodie", price: 300, imageUrl: "/clothes/hoodie.png", category: "clothes"},
-                {id: "minion_overalls", name: "Minion", price: 1000, imageUrl: "/clothes/minion_overalls.png", category: "clothes"},
+                {id: "minion", name: "Minion", price: 1000, imageUrl: "/bodies/minion.png", category: "bodies"}
             ]
-        }
+        },
     ];
 
     useEffect(() => {
