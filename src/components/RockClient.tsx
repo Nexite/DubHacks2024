@@ -130,6 +130,7 @@ export default function RockClient() {
                 }
 
                 setTodos([...todos, data.todo]);
+                return data.todo;
             } catch (error: unknown) {
                 console.error('Error adding todo:', error);
                 setError(error instanceof Error ? error.message : 'Failed to add todo');
@@ -283,6 +284,8 @@ export default function RockClient() {
             <div className="flex flex-1 overflow-hidden">
                 <div className="w-1/2 p-6 overflow-y-auto">
                     <TodoList
+                        diamonds={diamonds}
+                        setDiamonds={setDiamonds}
                         todos={todos}
                         onAddTodo={addTodo}
                         onToggleTodo={toggleTodo}

@@ -13,11 +13,34 @@ interface TodoListProps {
     onAddTodo: (text: string) => void;
     onToggleTodo: (id: number) => void;
     onDeleteTodo: (id: number) => void;
+    diamonds: number;
+    setDiamonds: (diamonds: number) => void;
 }
 
-const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onDeleteTodo }) => {
+const recommendedTodos: Todo[] = [
+    { id: 1, text: "Drink a glass of water", diamonds: 5, completed: false },
+    { id: 2, text: "Go for a walk", diamonds: 17, completed: false },
+    { id: 3, text: "Call your mom", diamonds: 15, completed: false },
+    { id: 4, text: "Write a thank you note", diamonds: 20, completed: false },
+    { id: 5, text: "Do the dishes", diamonds: 10, completed: false },
+    { id: 6, text: "Think of 3 things you're grateful for", diamonds: 8, completed: false },
+    { id: 7, text: "Eat a healthy breakfast", diamonds: 12, completed: false },
+    { id: 8, text: "Write down 3 things you want to accomplish today", diamonds: 9, completed: false },
+    { id: 9, text: "Meditate for 5 minutes", diamonds: 14, completed: false },
+    { id: 10, text: "Do 10 minutes of stretching", diamonds: 13, completed: false },
+    { id: 11, text: "Go to the gym", diamonds: 23, completed: false },
+];
+
+const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onDeleteTodo, diamonds, setDiamonds }) => {
     const [inputText, setInputText] = useState('');
     const [showConfetti, setShowConfetti] = useState(false);
+
+    const [completedTodos, setCompletedTodos] = useState<Todo[]>([]);
+
+    const [recommendTodos, setRecommendTodos] = useState(() => {
+        const shuffled = [...recommendedTodos].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, 3);
+    });
 
     const handleAddTodo = () => {
         if (inputText.trim() !== '') {
@@ -35,7 +58,44 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onD
         onToggleTodo(id);
     }, [todos, onToggleTodo]);
 
+    const handleCompleteRecommendedTodo = async (id: number) => {
+        const todo = recommendTodos.find(t => t.id === id);
+        if (todo) {
+            setShowConfetti(true);
+            setTimeout(() => setShowConfetti(false), 2000);
+            setCompletedTodos(prev => [...prev, { ...todo, completed: true }]);
+            // onAddTodo(todo.text);
+            setRecommendTodos(prev => prev.filter(t => t.id !== id));
+
+            // Add diamonds to account using API route
+            try {
+                // Then, update the diamond count
+                const updateDiamondsResponse = await fetch('/api/diamonds', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ diamonds: diamonds + todo.diamonds }),
+                });
+
+
+                if (!updateDiamondsResponse.ok) {
+                    throw new Error('Failed to update diamonds');
+                }
+
+                setDiamonds(diamonds + todo.diamonds);
+
+                // Optionally, you can update the UI to reflect the new diamond count
+                // This depends on how you're managing the overall state of the app
+            } catch (error) {
+                console.error('Error updating diamonds:', error);
+                // Optionally, show an error message to the user
+            }
+        }
+    };
+
     todos.sort((a, b) => a.completed ? 1 : b.completed ? -1 : 0);
+    console.log(recommendTodos);
 
     return (
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -57,6 +117,8 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onD
                 </button>
             </div>
             <ul>
+                <h3 className="text-lg font-bold mb-2 text-gray-800">Your Todos</h3>
+
                 {todos.map(todo => (
                     <li key={todo.id} className="flex items-center mb-2">
                         <input
@@ -64,7 +126,6 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onD
                             checked={todo.completed}
                             onChange={() => handleToggleTodo(todo.id)}
                             className="mr-2"
-                            disabled={typeof todo.id === 'number' && todo.id > Date.now() - 5000} // Disable for new todos
                         />
                         <span className={`text-gray-800 ${todo.completed ? 'line-through text-gray-500' : ''}`}>
                             {todo.text} (💎 {todo.diamonds})
@@ -72,7 +133,45 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onD
                         <button
                             onClick={() => onDeleteTodo(todo.id)}
                             className="ml-auto bg-red-500 text-white px-2 py-1 rounded"
-                            disabled={typeof todo.id === 'number' && todo.id > Date.now() - 5000} // Disable for new todos
+                        >
+                            Delete
+                        </button>
+                    </li>
+                ))}
+                <h3 className="text-lg font-bold mb-2 text-gray-800">Recommended Todos</h3>
+                {recommendTodos.map(todo => (
+                    <li key={todo.id} className="flex items-center mb-2">
+                        <input
+                            type="checkbox"
+                            checked={todo.completed}
+                            onChange={() => handleCompleteRecommendedTodo(todo.id)}
+                            className="mr-2"
+                        />
+                        <span className={`text-gray-800 ${todo.completed ? 'line-through text-gray-500' : ''}`}>
+                            {todo.text} (💎 {todo.diamonds})
+                        </span>
+                        <button
+                            onClick={() => onDeleteTodo(todo.id)}
+                            className="ml-auto bg-red-500 text-white px-2 py-1 rounded"
+                        >
+                            Delete
+                        </button>
+                    </li>
+                ))}
+                {completedTodos.map(todo => (
+                    <li key={todo.id} className="flex items-center mb-2">
+                        <input
+                            type="checkbox"
+                            checked={todo.completed}
+                            onChange={() => handleToggleTodo(todo.id)}
+                            className="mr-2"
+                        />
+                        <span className={`text-gray-800 ${todo.completed ? 'line-through text-gray-500' : ''}`}>
+                            {todo.text} (💎 {todo.diamonds})
+                        </span>
+                        <button
+                            onClick={() => onDeleteTodo(todo.id)}
+                            className="ml-auto bg-red-500 text-white px-2 py-1 rounded"
                         >
                             Delete
                         </button>
