@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import Header from './Header';
 import TodoList from './TodoList';
 import Rock from './Rock';
-import ShopWithTabs from './ShopWithTabs';
+import Accessories from './Accessories';
 import LoginScreen from './LoginScreen';
 
 interface Todo {
@@ -39,23 +39,14 @@ export default function RockClient() {
         {
             name: "hats",
             items: [
-                { id: "hat1", name: "Cowboy Hat", price: 10, imageUrl: "/hats/cowboy-hat.png", category: "hats" },
-                { id: "hat2", name: "Top Hat", price: 15, imageUrl: "/hats/top-hat.png", category: "hats" },
-                { id: "hat3", name: "Baseball Cap", price: 8, imageUrl: "/hats/baseball-cap.png", category: "hats" },
-                { id: "hat4", name: "Baseball Cap", price: 8, imageUrl: "/hats/baseball-cap.png", category: "hats" },
-                { id: "hat5", name: "rat", price: 8, imageUrl: "/hats/baseball-cap.png", category: "hats" }
+                {id: "beanie", name: "Beanie", price: 10, imageUrl: "/hats/beanie.png", category: "hats"}
             ]
         },
         {
             name: "eyes",
             items: [
-                { id: "eyes1", name: "Sunglasses", price: 5, imageUrl: "/eyes/sunglasses.png", category: "eyes" }
-            ]
-        },
-        {
-            name: "teeth",
-            items: [
-                { id: "eyes1", name: "Sunglasses", price: 5, imageUrl: "/eyes/sunglasses.png", category: "eyes" }
+                {id: "eyes_blue", name: "Blue Eyes", price: 5, imageUrl: "/eyes/eyes_blue.png", category: "eyes"},
+                {id: "eyes_closed", name: "Closed Eyes", price: 5, imageUrl: "/eyes/eyes_closed.png", category: "eyes"},
             ]
         }
     ];
@@ -288,7 +279,7 @@ export default function RockClient() {
                 <div className="w-1/2 p-6 flex flex-col">
                     <Rock inventory={inventory} shopItems={shopCategories.flatMap(category => category.items)} />
                     
-                    <ShopWithTabs 
+                    <Accessories 
                         categories={shopCategories} 
                         diamonds={diamonds} 
                         onPurchase={handlePurchase}
