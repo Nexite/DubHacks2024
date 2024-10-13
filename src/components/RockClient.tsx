@@ -39,28 +39,28 @@ export default function RockClient() {
         {
             name: "hats",
             items: [
-                {id: "beanie", name: "Beanie", price: 10, imageUrl: "/hats/beanie.png", category: "hats"}
+                {id: "beanie", name: "Beanie", price: 250, imageUrl: "/hats/beanie.png", category: "hats"}
             ]
         },
         {
             name: "eyes",
             items: [
-                {id: "eyes_blue", name: "Blue Eyes", price: 5, imageUrl: "/eyes/eyes_blue.png", category: "eyes"},
-                {id: "eyes_brown", name: "Brown Eyes", price: 5, imageUrl: "/eyes/eyes_brown.png", category: "eyes"},
-                {id: "eyes_closed", name: "Closed Eyes", price: 5, imageUrl: "/eyes/eyes_closed.png", category: "eyes"},
+                {id: "eyes_blue", name: "Blue Eyes", price: 50, imageUrl: "/eyes/eyes_blue.png", category: "eyes"},
+                {id: "eyes_brown", name: "Brown Eyes", price: 50, imageUrl: "/eyes/eyes_brown.png", category: "eyes"},
+                {id: "eyes_closed", name: "Closed Eyes", price: 75, imageUrl: "/eyes/eyes_closed.png", category: "eyes"},
             ]
         },
         {
             name: "mouths",
             items: [
-                {id: "mouth_smirk", name: "Smirk", price: 5, imageUrl: "/mouths/smirk.png", category: "mouths"},
-                {id: "mouth_teeth", name: "Teeth", price: 5, imageUrl: "/mouths/2_teeth.png", category: "mouths"},
+                {id: "mouth_smirk", name: "Smirk", price: 50, imageUrl: "/mouths/smirk.png", category: "mouths"},
+                {id: "mouth_teeth", name: "Teeth", price: 50, imageUrl: "/mouths/2_teeth.png", category: "mouths"},
             ]
         },
         {
             name: "clothes",
             items: [
-                {id: "suit", name: "Suit", price: 100, imageUrl: "/clothes/suit.png", category: "clothes"},
+                {id: "suit", name: "Suit", price: 450, imageUrl: "/clothes/suit.png", category: "clothes"},
             ]
         }
     ];
