@@ -70,12 +70,9 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onD
             setShowConfetti(true);
             setTimeout(() => setShowConfetti(false), 2000);
             setCompletedTodos(prev => [...prev, { ...todo, completed: true }]);
-            // onAddTodo(todo.text);
             setRecommendTodos(prev => prev.filter(t => t.id !== id));
 
-            // Add diamonds to account using API route
             try {
-                // Then, update the diamond count
                 const updateDiamondsResponse = await fetch('/api/diamonds', {
                     method: 'PUT',
                     headers: {
@@ -91,11 +88,8 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onD
 
                 setDiamonds(diamonds + todo.diamonds);
 
-                // Optionally, you can update the UI to reflect the new diamond count
-                // This depends on how you're managing the overall state of the app
             } catch (error) {
                 console.error('Error updating diamonds:', error);
-                // Optionally, show an error message to the user
             }
         }
     };
@@ -112,7 +106,7 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onD
                     type="text"
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    onKeyPress={handleKeyPress}
+                    onKeyDown={handleKeyPress}
                     className="flex-grow p-2 border rounded-l text-gray-800"
                     placeholder="Add a new todo"
                 />

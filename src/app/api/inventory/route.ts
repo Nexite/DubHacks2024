@@ -81,7 +81,6 @@ export async function PUT(req: NextRequest) {
     let inventory: InventoryItem[] = user.data.user_metadata?.inventory || [];
 
     if (equip) {
-      // Unequip all items in the same category
       inventory = inventory.map(item => {
         if (item.category === category) {
           return { ...item, equipped: false };
@@ -90,7 +89,6 @@ export async function PUT(req: NextRequest) {
       });
     }
 
-    // Update the selected item
     inventory = inventory.map(item => {
       if (item.id === itemId) {
         return { ...item, equipped: equip };

@@ -57,7 +57,6 @@ export async function POST(req: Request) {
       parsedContent = JSON.parse(content);
     } catch (parseError) {
       console.error('Error parsing OpenAI response:', parseError);
-      // If parsing fails, attempt to extract the score using regex
       const scoreMatch = content.match(/\d+/);
       if (scoreMatch) {
         parsedContent = { score: parseInt(scoreMatch[0], 10) };
@@ -78,7 +77,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ 
       diamonds: normalizedScore,
-      rawResponse: content  // Include the raw response in the API response
+      rawResponse: content
     });
   } catch (error: unknown) {
     console.error('Error analyzing task:', error);

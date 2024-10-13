@@ -4,22 +4,27 @@ import { InventoryItem, ShopItem } from './Accessories';
 const Rock: React.FC<{ inventory: InventoryItem[]; shopItems: ShopItem[] }> = ({ inventory, shopItems }) => {
     const equippedItemImages = inventory.filter(item => item.equipped).map(item => shopItems.find(shopItem => shopItem.id === item.id)?.imageUrl);
     
-    // Check if eyes are equipped, if not, add the default eyes image
     const hasEyes = equippedItemImages.some(url => url?.includes('eyes/'));
     if (!hasEyes) {
         equippedItemImages.push('/eyes/eyes.png');
     }
+    const hasBody = equippedItemImages.some(url => url?.includes('bodies/'));
+    if (!hasBody) {
+        equippedItemImages.push('/bodies/rock.png');
+    }
+    // sort equippedItemImages so body is first, then eyes, then mouths, then anything else
+    equippedItemImages.sort((a, b) => a?.includes('bodies/') ? -1 : b?.includes('bodies/') ? 1 : a?.includes('eyes/') ? -1 : b?.includes('eyes/') ? 1 : a?.includes('mouths/') ? -1 : b?.includes('mouths/') ? 1 : 0);
     
     return (
         <div className="flex-grow relative mb-4">
             <div className="rock-container">
-                <Image
+                {/* <Image
                     src="/rock.png"
                     alt="A picture of a rock"
                     layout="fill"
                     objectFit="contain"
                     className="rounded-lg rock-sway"
-                />
+                /> */}
                 {equippedItemImages.map((imageUrl, index) => (
                     <Image
                         key={index}
