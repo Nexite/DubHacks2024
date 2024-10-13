@@ -7,6 +7,7 @@ import TodoList from './TodoList';
 import Rock from './Rock';
 import Accessories from './Accessories';
 import LoginScreen from './LoginScreen';
+import Footer from './Footer';  // Import the new Footer component
 
 interface Todo {
     id: number;
@@ -300,7 +301,7 @@ export default function RockClient() {
     }
 
     return (
-        <div className="flex flex-col h-screen bg-gray-100">
+        <div className="flex flex-col min-h-screen bg-gray-100">
             <Header diamonds={diamonds} />
 
             <div className="flex flex-1 overflow-hidden">
@@ -334,6 +335,8 @@ export default function RockClient() {
                     <span className="block sm:inline">{error}</span>
                 </div>
             )}
+
+            <Footer />
         </div>
     );
 }

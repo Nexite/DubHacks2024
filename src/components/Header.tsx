@@ -4,25 +4,19 @@ interface HeaderProps {
     diamonds: number;
 }
 
-const Header: React.FC<HeaderProps> = ({ diamonds }) => {
-    const handleLogout = async () => {
-        await signOut({ callbackUrl: '/' });
-    };
-
+export default function Header({ diamonds }: HeaderProps) {
     return (
-        <div className="flex justify-between items-center p-4 bg-white shadow-md">
-            <button
-                onClick={handleLogout}
-                className="bg-red-500 text-white px-4 py-2 rounded shadow-md hover:bg-red-600 transition-colors h-12 text-xl"
-            >
-                Logout
-            </button>
-            <div className="bg-blue-600 px-4 py-2 rounded-lg shadow-md flex items-center h-12">
-                <span className="mr-2 text-yellow-300 text-2xl">💎</span>
-                <span className="font-bold text-white text-2xl">{diamonds}</span>
+        <header className="bg-blue-500 text-white p-4 flex justify-between items-center">
+            <div className="flex items-center">
+                <span className="text-2xl font-bold">💎 {diamonds}</span>
             </div>
-        </div>
+            <h1 className="text-2xl font-bold">TaskRock</h1>
+            <button
+                onClick={() => signOut()}
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+            >
+                Log Out
+            </button>
+        </header>
     );
-};
-
-export default Header;
+}

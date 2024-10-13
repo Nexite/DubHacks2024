@@ -129,7 +129,7 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onD
                             className="mr-2"
                         />
                         <span className={`text-gray-800 ${todo.completed ? 'line-through text-gray-500' : ''}`}>
-                            {todo.text} (💎 {todo.diamonds})
+                            {todo.text} <span className="text-lg font-bold ml-2">💎 {todo.diamonds}</span>
                         </span>
                         <button
                             onClick={() => onDeleteTodo(todo.id)}
@@ -139,7 +139,7 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onD
                         </button>
                     </li>
                 ))}
-                <h3 className="text-lg font-bold mb-2 text-gray-800">Recommended Todos</h3>
+                <h3 className="text-lg font-bold mb-2 mt-4 text-gray-800">Recommended Todos</h3>
                 {recommendTodos.map(todo => (
                     <li key={todo.id} className="flex items-center mb-2">
                         <input
@@ -149,14 +149,8 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onD
                             className="mr-2"
                         />
                         <span className={`text-gray-800 ${todo.completed ? 'line-through text-gray-500' : ''}`}>
-                            {todo.text} (💎 {todo.diamonds})
+                            {todo.text} <span className="text-lg font-bold ml-2">💎 {todo.diamonds}</span>
                         </span>
-                        <button
-                            onClick={() => onDeleteTodo(todo.id)}
-                            className="ml-auto bg-red-500 text-white px-2 py-1 rounded"
-                        >
-                            Delete
-                        </button>
                     </li>
                 ))}
                 {completedTodos.map(todo => (
@@ -167,15 +161,9 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onD
                             onChange={() => handleToggleTodo(todo.id)}
                             className="mr-2"
                         />
-                        <span className={`text-gray-800 ${todo.completed ? 'line-through text-gray-500' : ''}`}>
-                            {todo.text} (💎 {todo.diamonds})
+                        <span className={`text-gray-800 line-through text-gray-500`}>
+                            {todo.text} <span className="text-lg font-bold ml-2">💎 {todo.diamonds}</span>
                         </span>
-                        <button
-                            onClick={() => onDeleteTodo(todo.id)}
-                            className="ml-auto bg-red-500 text-white px-2 py-1 rounded"
-                        >
-                            Delete
-                        </button>
                     </li>
                 ))}
             </ul>
