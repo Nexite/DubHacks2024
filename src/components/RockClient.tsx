@@ -37,9 +37,20 @@ export default function RockClient() {
 
     const shopCategories = [
         {
+            name: "bodies",
+            items: [
+                {id: "minion", name: "Minion", price: 1000, imageUrl: "/bodies/minion.png", category: "bodies"}
+            ]
+        },
+        {
             name: "hats",
             items: [
-                {id: "beanie", name: "Beanie", price: 250, imageUrl: "/hats/beanie.png", category: "hats"}
+                {id: "beanie", name: "Beanie", price: 250, imageUrl: "/hats/beanie.png", category: "hats"},
+                {id: "bow_purple", name: "Purple Bow", price: 200, imageUrl: "/hats/bow_purple.png", category: "hats"},
+                {id: "bow_red", name: "Red Bow", price: 200, imageUrl: "/hats/bow_red.png", category: "hats"},
+                {id: "fedora", name: "Fedora", price: 300, imageUrl: "/hats/fedora.png", category: "hats"},
+                {id: "halo", name: "Halo", price: 500, imageUrl: "/hats/halo.png", category: "hats"},
+                {id: "minion_hair", name: "Minion", price: 1000, imageUrl: "/hats/minion_hair.png", category: "hats"}
             ]
         },
         {
@@ -48,6 +59,8 @@ export default function RockClient() {
                 {id: "eyes_blue", name: "Blue Eyes", price: 50, imageUrl: "/eyes/eyes_blue.png", category: "eyes"},
                 {id: "eyes_brown", name: "Brown Eyes", price: 50, imageUrl: "/eyes/eyes_brown.png", category: "eyes"},
                 {id: "eyes_closed", name: "Closed Eyes", price: 75, imageUrl: "/eyes/eyes_closed.png", category: "eyes"},
+                {id: "eyes_green", name: "Green Eyes", price: 50, imageUrl: "/eyes/eyes_green.png", category: "eyes"},
+                {id: "eyes_bloodshot", name: "Bloodshot", price: 75, imageUrl: "/eyes/eyes_bloodshot.png", category: "eyes"}
             ]
         },
         {
@@ -55,12 +68,19 @@ export default function RockClient() {
             items: [
                 {id: "mouth_smirk", name: "Smirk", price: 50, imageUrl: "/mouths/smirk.png", category: "mouths"},
                 {id: "mouth_teeth", name: "Teeth", price: 50, imageUrl: "/mouths/2_teeth.png", category: "mouths"},
+                {id: ":3", name: ":3", price: 50, imageUrl: "/mouths/3.png", category: "mouths"},
+                {id: "grill", name: "Grill", price: 100, imageUrl: "/mouths/grill.png", category: "mouths"},
+                {id: "grimace", name: "Grimace", price: 50, imageUrl: "/mouths/grimace.png", category: "mouths"},
+                {id: "tongue", name: "Tongue", price: 75, imageUrl: "/mouths/tongue.png", category: "mouths"},
             ]
         },
         {
             name: "clothes",
             items: [
                 {id: "suit", name: "Suit", price: 450, imageUrl: "/clothes/suit.png", category: "clothes"},
+                {id: "furry_coat", name: "Fur Coat", price: 400, imageUrl: "/clothes/furry_coat.png", category: "clothes"},
+                {id: "hoodie", name: "Hoodie", price: 300, imageUrl: "/clothes/hoodie.png", category: "clothes"},
+                {id: "minion_overalls", name: "Minion", price: 1000, imageUrl: "/clothes/minion_overalls.png", category: "clothes"},
             ]
         }
     ];

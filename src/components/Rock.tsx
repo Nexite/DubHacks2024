@@ -59,7 +59,7 @@ const Rock: React.FC<{ inventory: InventoryItem[]; shopItems: ShopItem[] }> = ({
                 }
                 
                 .accessory-bounce {
-                    animation: bounce 2s ease-in-out infinite;
+                    animation: bounce 3s ease-in-out infinite;
                 }
             `}</style>
         </div>
