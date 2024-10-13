@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-  const session = (await auth()) as CustomSession;
+  const session = (await auth());
   if (!session || !session.user?.sub) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
