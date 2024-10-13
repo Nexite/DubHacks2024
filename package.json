@@ -10,7 +10,11 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.1.10",
+    "auth0": "^4.10.0",
+    "install": "^0.13.0",
     "next": "14.2.15",
+    "next-auth": "^4.24.8",
+    "npm": "^10.9.0",
     "openai": "^4.67.3",
     "react": "^18",
     "react-dom": "^18"

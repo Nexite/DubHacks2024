@@ -1,162 +1,303 @@
 'use client';
 
-import { useState } from 'react';
-import Shop from '@/components/Shop';
-import Image from 'next/image';
-
-const shopItems = [
-  { name: 'Cowboy Hat', price: 9.99, imageUrl: '/hats/cowboy-hat.png' },
-  { name: 'Top Hat', price: 14.99, imageUrl: '/hats/top-hat.png' },
-  { name: 'Baseball Cap', price: 7.99, imageUrl: '/hats/baseball-cap.png' },
-];
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import Header from './Header';
+import TodoList from './TodoList';
+import Rock from './Rock';
+import ShopWithTabs from './ShopWithTabs';
+import LoginScreen from './LoginScreen';
 
 interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
-  diamonds: number;
+    id: number;
+    text: string;
+    completed: boolean;
+    diamonds: number;
+}
+
+interface InventoryItem {
+    id: string;
+    equipped: boolean;
+}
+
+interface ShopItem {
+    id: string;
+    name: string;
+    price: number;
+    imageUrl: string;
+    category: string;
 }
 
 export default function RockClient() {
+    const { data: session, status } = useSession();
     const [diamonds, setDiamonds] = useState(0);
     const [todos, setTodos] = useState<Todo[]>([]);
-    const [inputText, setInputText] = useState('');
     const [error, setError] = useState<string | null>(null);
+    const [inventory, setInventory] = useState<InventoryItem[]>([]);
 
-    const addTodo = async () => {
-        if (inputText.trim() !== '') {
+    const shopCategories = [
+        {
+            name: "hats",
+            items: [
+                { id: "hat1", name: "Cowboy Hat", price: 10, imageUrl: "/hats/cowboy-hat.png", category: "hats" },
+                { id: "hat2", name: "Top Hat", price: 15, imageUrl: "/hats/top-hat.png", category: "hats" },
+                { id: "hat3", name: "Baseball Cap", price: 8, imageUrl: "/hats/baseball-cap.png", category: "hats" },
+                { id: "hat4", name: "Baseball Cap", price: 8, imageUrl: "/hats/baseball-cap.png", category: "hats" },
+                { id: "hat5", name: "rat", price: 8, imageUrl: "/hats/baseball-cap.png", category: "hats" }
+            ]
+        },
+        {
+            name: "eyes",
+            items: [
+                { id: "eyes1", name: "Sunglasses", price: 5, imageUrl: "/eyes/sunglasses.png", category: "eyes" }
+            ]
+        },
+        {
+            name: "teeth",
+            items: [
+                { id: "eyes1", name: "Sunglasses", price: 5, imageUrl: "/eyes/sunglasses.png", category: "eyes" }
+            ]
+        }
+    ];
+
+    useEffect(() => {
+        if (session) {
+            fetchTodos();
+            fetchDiamonds();
+            fetchInventory();
+        }
+    }, [session]);
+
+    const fetchInventory = async () => {
+        try {
+            const response = await fetch('/api/inventory');
+            const data = await response.json();
+            if (data.inventory) {
+                setInventory(data.inventory);
+            }
+        } catch (error) {
+            console.error('Error fetching inventory:', error);
+            setError('Failed to fetch inventory');
+        }
+    };
+
+    const fetchTodos = async () => {
+        try {
+            const response = await fetch('/api/todos');
+            const data = await response.json();
+            if (data.todos) {
+                setTodos(data.todos);
+            }
+        } catch (error) {
+            console.error('Error fetching todos:', error);
+            setError('Failed to fetch todos');
+        }
+    };
+
+    const fetchDiamonds = async () => {
+        try {
+            const response = await fetch('/api/diamonds');
+            const data = await response.json();
+            if (data.diamonds !== undefined) {
+                setDiamonds(data.diamonds);
+            }
+        } catch (error) {
+            console.error('Error fetching diamonds:', error);
+            setError('Failed to fetch diamonds');
+        }
+    };
+
+    const addTodo = async (text: string) => {
+        if (text.trim() !== '') {
             try {
                 setError(null);
-                const response = await fetch('/api/analyze-task', {
+                const response = await fetch('/api/todos', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ task: inputText.trim() }),
+                    body: JSON.stringify({ text: text.trim() }),
                 });
                 const data = await response.json();
-                
+
                 if (data.error) {
                     throw new Error(data.error);
                 }
-                
-                setTodos([...todos, { 
-                    id: Date.now(), 
-                    text: inputText.trim(), 
-                    completed: false,
-                    diamonds: data.diamonds
-                }]);
-                setInputText('');
+
+                setTodos([...todos, data.todo]);
             } catch (error: unknown) {
                 console.error('Error adding todo:', error);
                 setError(error instanceof Error ? error.message : 'Failed to add todo');
-                // Fallback to a default value if the API call fails
-                setTodos([...todos, { 
-                    id: Date.now(), 
-                    text: inputText.trim(), 
-                    completed: false,
-                    diamonds: 1
-                }]);
-                setInputText('');
             }
         }
     };
 
-    const toggleTodo = (id: number) => {
-        setTodos(todos.map(todo => {
-            if (todo.id === id) {
-                if (!todo.completed) {
-                    setDiamonds(prev => prev + todo.diamonds);
-                } else {
-                    setDiamonds(prev => prev - todo.diamonds);
+    const toggleTodo = async (id: number) => {
+        try {
+            const todoToToggle = todos.find(todo => todo.id === id);
+            if (!todoToToggle) return;
+
+            const response = await fetch('/api/todos', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id, completed: !todoToToggle.completed }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update todo');
+            }
+
+            const newDiamonds = todoToToggle.completed
+                ? diamonds - todoToToggle.diamonds
+                : diamonds + todoToToggle.diamonds;
+
+            await fetch('/api/diamonds', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ diamonds: newDiamonds }),
+            });
+
+            setTodos(todos.map(todo =>
+                todo.id === id ? { ...todo, completed: !todo.completed } : todo
+            ));
+            setDiamonds(newDiamonds);
+        } catch (error) {
+            console.error('Error toggling todo:', error);
+            setError('Failed to update todo');
+        }
+    };
+
+    const deleteTodo = async (id: number) => {
+        try {
+            const response = await fetch('/api/todos', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete todo');
+            }
+
+            setTodos(todos.filter(todo => todo.id !== id));
+        } catch (error) {
+            console.error('Error deleting todo:', error);
+            setError('Failed to delete todo');
+        }
+    };
+
+    const handlePurchase = async (item: ShopItem) => {
+        if (diamonds >= item.price) {
+            try {
+                console.log('Sending purchase request for item:', item);
+                const response = await fetch('/api/inventory', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ itemId: item.id, category: item.category }),
+                });
+
+                console.log('Purchase response status:', response.status);
+                const responseData = await response.json();
+                console.log('Purchase response data:', responseData);
+
+                if (!response.ok) {
+                    throw new Error(responseData.error || 'Failed to add item to inventory');
                 }
-                return { ...todo, completed: !todo.completed };
+
+                const newDiamondCount = diamonds - item.price;
+                const diamondResponse = await fetch('/api/diamonds', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ diamonds: newDiamondCount }),
+                });
+
+                if (!diamondResponse.ok) {
+                    throw new Error('Failed to update diamond count');
+                }
+
+                setDiamonds(newDiamondCount);
+                await fetchInventory();
+            } catch (error) {
+                console.error('Error purchasing item:', error);
+                setError(error instanceof Error ? error.message : 'Failed to purchase item');
             }
-            return todo;
-        }));
+        } else {
+            setError('Not enough diamonds to purchase this item');
+        }
     };
 
-    const deleteTodo = (id: number) => {
-        const todoToDelete = todos.find(todo => todo.id === id);
-        if (todoToDelete && todoToDelete.completed) {
-            setDiamonds(prev => prev - todoToDelete.diamonds);
+    const handleEquip = async (itemId: string, category: string, equip: boolean) => {
+        try {
+            const response = await fetch('/api/inventory', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ itemId, equip, category }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update inventory');
+            }
+
+            const data = await response.json();
+            setInventory(data.inventory);
+        } catch (error) {
+            console.error('Error equipping/unequipping item:', error);
+            setError('Failed to equip/unequip item');
         }
-        setTodos(todos.filter(todo => todo.id !== id));
     };
+
+    if (status === "loading") {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+        );
+    }
+
+    if (!session) {
+        console.log('No session found, redirecting to login');
+        return <LoginScreen />;
+    }
 
     return (
         <div className="flex flex-col h-screen bg-gray-100">
-            {/* Header with Diamond counter and Shop button */}
-            <div className="flex justify-end items-center p-4 bg-white shadow-md">
-                <div className="flex items-center space-x-4">
-                    <div className="bg-blue-600 p-3 rounded-lg shadow-md flex items-center h-12">
-                        <span className="mr-2 text-yellow-300 text-2xl">💎</span>
-                        <span className="font-bold text-white text-2xl">{diamonds}</span>
-                    </div>
-                    <Shop items={shopItems} className="h-12 text-xl" />
-                </div>
-            </div>
+            <Header diamonds={diamonds} />
 
-            {/* Main content */}
             <div className="flex flex-1 overflow-hidden">
-                {/* Todo List */}
                 <div className="w-1/2 p-6 overflow-y-auto">
-                    <div className="bg-white rounded-lg shadow-md p-6">
-                        <h2 className="text-2xl font-bold mb-4 text-gray-800">Todo List</h2>
-                        <div className="flex mb-4">
-                            <input
-                                type="text"
-                                value={inputText}
-                                onChange={(e) => setInputText(e.target.value)}
-                                className="flex-grow p-2 border rounded-l text-gray-800"
-                                placeholder="Add a new todo"
-                            />
-                            <button
-                                onClick={addTodo}
-                                className="bg-blue-500 text-white px-4 py-2 rounded-r"
-                            >
-                                Add
-                            </button>
-                        </div>
-                        <ul>
-                            {todos.map(todo => (
-                                <li key={todo.id} className="flex items-center mb-2">
-                                    <input
-                                        type="checkbox"
-                                        checked={todo.completed}
-                                        onChange={() => toggleTodo(todo.id)}
-                                        className="mr-2"
-                                    />
-                                    <span className={`text-gray-800 ${todo.completed ? 'line-through text-gray-500' : ''}`}>
-                                        {todo.text} (💎 {todo.diamonds})
-                                    </span>
-                                    <button
-                                        onClick={() => deleteTodo(todo.id)}
-                                        className="ml-auto bg-red-500 text-white px-2 py-1 rounded"
-                                    >
-                                        Delete
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    <TodoList
+                        todos={todos}
+                        onAddTodo={addTodo}
+                        onToggleTodo={toggleTodo}
+                        onDeleteTodo={deleteTodo}
+                    />
                 </div>
 
-                {/* Rock Image */}
-                <div className="w-1/2 p-6 flex flex-col items-center">
-                    <div className="relative w-full h-3/4">
-                        <Image
-                            src="/rock.webp"
-                            alt="A picture of a rock"
-                            layout="fill"
-                            objectFit="contain"
-                            className="rounded-lg"
-                        />
-                    </div>
+                <div className="w-1/2 p-6 flex flex-col">
+                    <Rock inventory={inventory} shopItems={shopCategories.flatMap(category => category.items)} />
+                    
+                    <ShopWithTabs 
+                        categories={shopCategories} 
+                        diamonds={diamonds} 
+                        onPurchase={handlePurchase}
+                        inventory={inventory}
+                        onEquip={handleEquip}
+                    />
                 </div>
             </div>
 
-            {/* Error display */}
             {error && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
                     <strong className="font-bold">Error: </strong>
@@ -164,5 +305,5 @@ export default function RockClient() {
                 </div>
             )}
         </div>
-    )
+    );
 }
