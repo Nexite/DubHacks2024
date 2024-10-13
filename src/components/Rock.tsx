@@ -9,17 +9,27 @@ const Rock: React.FC<{ inventory: InventoryItem[]; shopItems: ShopItem[] }> = ({
     if (!hasEyes) {
         equippedItemImages.push('/eyes/eyes.png');
     }
-    
+
+    const hasBody = equippedItemImages.some(url => url?.includes('bodies/'));
+    if (!hasBody) {
+        equippedItemImages.push('/bodies/body.png');
+    }
+    equippedItemImages.sort((a, b) => {
+        if (a?.includes('bodies/')) return -1;
+        if (b?.includes('bodies/')) return 1;
+        return 0;
+    });
+    console.log(equippedItemImages);
     return (
         <div className="flex-grow relative mb-4">
             <div className="rock-container">
-                <Image
+                {/* <Image
                     src="/rock.png"
                     alt="A picture of a rock"
                     layout="fill"
                     objectFit="contain"
                     className="rounded-lg rock-sway"
-                />
+                /> */}
                 {equippedItemImages.map((imageUrl, index) => (
                     <Image
                         key={index}
