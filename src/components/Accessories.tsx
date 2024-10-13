@@ -30,17 +30,25 @@ interface AccessoriesProps {
 const Accessories: React.FC<AccessoriesProps> = ({ categories, diamonds, onPurchase, inventory, onEquip }) => {
     const [activeCategory, setActiveCategory] = useState(categories[0].name);
     const [isOpen, setIsOpen] = useState(true);
+    categories = categories.map(category => ({
+        ...category,
+        items: [...category.items].sort((a, b) => a.price - b.price)
+    }));
 
     const isItemOwned = (itemId: string) => inventory.some(item => item.id === itemId);
     const isItemEquipped = (itemId: string) => inventory.some(item => item.id === itemId && item.equipped);
 
     const getImageStyle = (category: string) => {
         switch (category) {
+            case 'clothes':
+                return 'object-bottom';
             case 'hats':
                 return 'object-top';
             case 'eyes':
             case 'mouths':
                 return 'object-center';
+            case 'bodies':
+                return 'object-contain';
             default:
                 return '';
         }
@@ -83,13 +91,13 @@ const Accessories: React.FC<AccessoriesProps> = ({ categories, diamonds, onPurch
                             .find((category) => category.name === activeCategory)
                             ?.items.map((item) => (
                                 <div key={item.id} className="bg-gray-100 p-3 rounded-lg flex flex-col items-center min-w-[200px]">
-                                    <div className="w-[80px] h-[80px] overflow-hidden mb-2">
+                                    <div className={`w-[80px] ${item.category === 'bodies' ? '' : 'h-[80px]'} overflow-hidden mb-2`}>
                                         <Image 
                                             src={item.imageUrl} 
                                             alt={item.name} 
                                             width={80} 
-                                            height={80} 
-                                            className={`w-full h-full object-cover ${getImageStyle(item.category)}`}
+                                            height={item.category === 'bodies' ? 160 : 80} 
+                                            className={`w-full ${item.category === 'bodies' ? 'h-auto' : 'h-full'} object-cover ${getImageStyle(item.category)}`}
                                         />
                                     </div>
                                     <h3 className="font-bold text-base mb-1">{item.name}</h3>
