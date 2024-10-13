@@ -1,7 +1,22 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 
-// ... (previous interfaces remain the same)
+interface ShopWithTabsProps {
+  categories: Array<{
+    name: string;
+    items: Array<{
+      id: string;
+      name: string;
+      price: number;
+      imageUrl: string;
+      category: string;
+    }>;
+  }>;
+  diamonds: number;
+  onPurchase: (item: { id: string; price: number }) => void;
+  inventory: Array<{ id: string; equipped: boolean }>;
+  onEquip: (itemId: string, category: string, equip: boolean) => void;
+}
 
 const ShopWithTabs: React.FC<ShopWithTabsProps> = ({ categories, diamonds, onPurchase, inventory, onEquip }) => {
     const [activeCategory, setActiveCategory] = useState(categories[0].name);
