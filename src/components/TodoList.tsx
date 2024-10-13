@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, KeyboardEvent } from 'react';
 import Confetti from 'react-confetti';
 
 interface Todo {
@@ -46,6 +46,12 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onD
         if (inputText.trim() !== '') {
             onAddTodo(inputText.trim());
             setInputText('');
+        }
+    };
+
+    const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            handleAddTodo();
         }
     };
 
@@ -106,6 +112,7 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onD
                     type="text"
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
+                    onKeyPress={handleKeyPress}
                     className="flex-grow p-2 border rounded-l text-gray-800"
                     placeholder="Add a new todo"
                 />
