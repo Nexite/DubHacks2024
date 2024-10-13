@@ -34,11 +34,23 @@ const Accessories: React.FC<AccessoriesProps> = ({ categories, diamonds, onPurch
     const isItemOwned = (itemId: string) => inventory.some(item => item.id === itemId);
     const isItemEquipped = (itemId: string) => inventory.some(item => item.id === itemId && item.equipped);
 
+    const getImageStyle = (category: string) => {
+        switch (category) {
+            case 'hats':
+                return 'object-top';
+            case 'eyes':
+            case 'mouths':
+                return 'object-center';
+            default:
+                return '';
+        }
+    };
+
     return (
         <div className="bg-white rounded-lg shadow-md mt-4 flex flex-col overflow-hidden transition-all duration-300 ease-in-out"
              style={{ maxHeight: isOpen ? '1000px' : '60px' }}>
-            <div className="flex justify-between items-center p-4 cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
-                <h2 className="text-xl font-bold">Accessories</h2>
+            <div className="flex justify-between items-center p-4 cursor-pointer h-[60px]" onClick={() => setIsOpen(!isOpen)}>
+                <h2 className="text-xl font-bold flex items-center h-full">Accessories</h2>
                 <div className="flex items-center">
                     <div className="bg-blue-600 px-3 py-1 rounded-lg shadow-md flex items-center mr-4">
                         <span className="mr-2 text-yellow-300 text-lg">💎</span>
@@ -71,7 +83,15 @@ const Accessories: React.FC<AccessoriesProps> = ({ categories, diamonds, onPurch
                             .find((category) => category.name === activeCategory)
                             ?.items.map((item) => (
                                 <div key={item.id} className="bg-gray-100 p-3 rounded-lg flex flex-col items-center min-w-[200px]">
-                                    <Image src={item.imageUrl} alt={item.name} width={80} height={80} className="mb-2" />
+                                    <div className="w-[80px] h-[80px] overflow-hidden mb-2">
+                                        <Image 
+                                            src={item.imageUrl} 
+                                            alt={item.name} 
+                                            width={80} 
+                                            height={80} 
+                                            className={`w-full h-full object-cover ${getImageStyle(item.category)}`}
+                                        />
+                                    </div>
                                     <h3 className="font-bold text-base mb-1">{item.name}</h3>
                                     <div className="flex-grow flex items-end">
                                         {isItemOwned(item.id) ? (

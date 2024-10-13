@@ -17,7 +17,6 @@ export async function GET(req: NextRequest) {
   try {
     const user = await management.users.get({ id: session.user.sub });
     const todos = user.data.user_metadata?.todos || [];
-    console.log(todos);
     return NextResponse.json({ todos });
   } catch (error) {
     console.error('Error fetching todos:', error);
@@ -45,7 +44,7 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({ task: text.trim() }),
     });
-    console.log(response);
+
     if (!response.ok) {
       throw new Error('Failed to analyze task');
     }

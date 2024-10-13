@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       messages: [
         {
           role: "system",
-          content: `You are an AI that analyzes tasks and assigns them a difficulty score from 1 to 100. 1 is very easy, 100 is extremely difficult. There are some examples listed below. Respond with a JSON object containing a 'score' key with the difficulty value. If you are given a task that is not an action, interpret it as an action that you would see on a to-do list like "read" or "write" or "call", etc. and then give it a score.
+          content: `You are an AI that analyzes tasks and assigns them a difficulty score from 1 to 100. 1 is very easy, 100 is extremely difficult. Your response should be ANYWHERE from 1 to 100 not just increments of 5. There are some examples listed below. Respond with a JSON object containing a 'score' key with the difficulty value. If you are given a task that is not an action, interpret it as an action that you would see on a to-do list like "read" or "write" or "call", etc. and then give it a score.
           
           Example 1: "Finish computer science homework" -> {"score": 50}
           Example 2: "Go grocery shopping" -> {"score": 23}
@@ -47,7 +47,6 @@ export async function POST(req: Request) {
     });
 
     const content = completion.choices[0].message.content;
-    console.log('Raw OpenAI response:', content);
 
     if (!content) {
       throw new Error('No content in OpenAI response');

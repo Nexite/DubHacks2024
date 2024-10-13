@@ -50,6 +50,13 @@ export default function RockClient() {
             ]
         },
         {
+            name: "mouths",
+            items: [
+                {id: "mouth_smirk", name: "Smirk", price: 5, imageUrl: "/mouths/smirk.png", category: "mouths"},
+                {id: "mouth_teeth", name: "Teeth", price: 5, imageUrl: "/mouths/2_teeth.png", category: "mouths"},
+            ]
+        },
+        {
             name: "clothes",
             items: [
                 {id: "suit", name: "Suit", price: 100, imageUrl: "/clothes/suit.png", category: "clothes"},

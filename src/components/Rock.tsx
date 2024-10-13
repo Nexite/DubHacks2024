@@ -9,8 +9,6 @@ const Rock: React.FC<{ inventory: InventoryItem[]; shopItems: ShopItem[] }> = ({
     if (!hasEyes) {
         equippedItemImages.push('/eyes/eyes.png');
     }
-
-    console.log(equippedItemImages);
     
     return (
         <div className="flex-grow relative mb-4">

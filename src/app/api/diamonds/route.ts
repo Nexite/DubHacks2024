@@ -10,14 +10,12 @@ const management = new ManagementClient({
 
 export async function GET(req: NextRequest) {
   const session = await auth();
-//   console.log("session", session);
   if (!session || !session.user?.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const user = await management.users.get({ id: session.user.sub });
-    // console.log(user);
     const diamonds = user.data.user_metadata?.diamonds || 0;
     return NextResponse.json({ diamonds });
   } catch (error) {
