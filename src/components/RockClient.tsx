@@ -48,6 +48,12 @@ export default function RockClient() {
                 {id: "eyes_blue", name: "Blue Eyes", price: 5, imageUrl: "/eyes/eyes_blue.png", category: "eyes"},
                 {id: "eyes_closed", name: "Closed Eyes", price: 5, imageUrl: "/eyes/eyes_closed.png", category: "eyes"},
             ]
+        },
+        {
+            name: "clothes",
+            items: [
+                {id: "suit", name: "Suit", price: 100, imageUrl: "/clothes/suit.png", category: "clothes"},
+            ]
         }
     ];
 
