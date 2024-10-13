@@ -24,18 +24,55 @@ export async function POST(req: Request) {
       messages: [
         {
           role: "system",
-          content: `You are an AI that analyzes tasks and assigns them a difficulty score from 1 to 100. 1 is very easy, 100 is extremely difficult. Your response should be ANYWHERE from 1 to 100 not just increments of 5. There are some examples listed below. Respond with a JSON object containing a 'score' key with the difficulty value. If you are given a task that is not an action, interpret it as an action that you would see on a to-do list like "read" or "write" or "call", etc. and then give it a score.
-          
-          Example 1: "Finish computer science homework" -> {"score": 50}
-          Example 2: "Go grocery shopping" -> {"score": 23}
-          Example 3: "Go on a walk" -> {"score": 12}
-          Example 4: "Learn a new programming language" -> {"score": 100}
-          Example 5: "Learn how to use a new software" -> {"score": 73}
-          Example 6: "Learn how to play the guitar" -> {"score": 98}
-          Example 7: "Call grandma" -> {"score": 15}
-          Example 8: "Put notebook in backpack" -> {"score": 3}
-          Example 9: "Do the dishes" -> {"score": 10}
-          Example 10: "Do the laundry" -> {"score": 17}
+          content: `
+          Evaluate the difficulty of tasks and assign a numerical score based on perceived complexity and time commitment.
+
+          Consider factors like required effort, complexity, skill level, and time required when scoring tasks.
+
+          # Steps
+
+          1. **Analyze the Task**: Determine the nature of the task, considering attributes like effort, complexity, skills required, and the time involved.
+          2. **Assign a Score**: Based on the analysis, assign a difficulty score from 0 to 100, where 0 is least difficult and 100 is most difficult.
+
+          # Output Format
+
+          Provide the output in JSON format, where the task is the key, and the difficulty score is the value, e.g., {"score": score}.
+
+          # Examples
+
+          - Input: "Finish computer science homework"
+            - Output: {"score": 50}
+
+          - Input: "Go grocery shopping"
+            - Output: {"score": 23}
+
+          - Input: "Go on a walk"
+            - Output: {"score": 12}
+
+          - Input: "Learn a new programming language"
+            - Output: {"score": 100}
+
+          - Input: "Learn how to use a new software"
+            - Output: {"score": 73}
+
+          - Input: "Learn how to play the guitar"
+            - Output: {"score": 98}
+
+          - Input: "Call grandma"
+            - Output: {"score": 15}
+
+          - Input: "Put notebook in backpack"
+            - Output: {"score": 3}
+
+          - Input: "Do the dishes"
+            - Output: {"score": 10}
+
+          - Input: "Do the laundry"
+            - Output: {"score": 17}
+
+          # Notes
+
+          Consider edge cases where some tasks may appear simple but require a significant time commitment due to external factors, such as waiting time or preparation. Adjust scores accordingly.
           `
         },
         {
@@ -45,7 +82,7 @@ export async function POST(req: Request) {
       ],
       max_tokens: 60,
     });
-
+    
     const content = completion.choices[0].message.content;
 
     if (!content) {
@@ -75,14 +112,14 @@ export async function POST(req: Request) {
     // Ensure the score is within the 1-100 range
     const normalizedScore = Math.max(1, Math.min(100, difficultyScore));
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       diamonds: normalizedScore,
       rawResponse: content
     });
   } catch (error: unknown) {
     console.error('Error analyzing task:', error);
-    return NextResponse.json({ 
-      error: 'Failed to analyze task', 
+    return NextResponse.json({
+      error: 'Failed to analyze task',
       details: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined
     }, { status: 500 });
