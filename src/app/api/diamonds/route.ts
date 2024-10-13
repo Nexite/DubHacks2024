@@ -8,7 +8,7 @@ const management = new ManagementClient({
   clientSecret: process.env.AUTH0_MANAGEMENT_API_CLIENT_SECRET!,
 });
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const session = await auth();
   if (!session || !session.user?.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

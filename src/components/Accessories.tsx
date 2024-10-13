@@ -36,6 +36,8 @@ const Accessories: React.FC<AccessoriesProps> = ({ categories, diamonds, onPurch
 
     const getImageStyle = (category: string) => {
         switch (category) {
+            case 'clothes':
+                return 'object-bottom';
             case 'hats':
                 return 'object-top';
             case 'eyes':

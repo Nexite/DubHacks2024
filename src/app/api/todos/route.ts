@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ManagementClient } from 'auth0';
 import { auth } from '@/lib/auth';
+import { Todo } from '@/types/todo';
 
 const management = new ManagementClient({
   domain: process.env.AUTH0_DOMAIN!,
@@ -8,7 +9,7 @@ const management = new ManagementClient({
   clientSecret: process.env.AUTH0_MANAGEMENT_API_CLIENT_SECRET!,
 });
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const session = await auth();
   if (!session || !session.user?.sub) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -44,7 +45,6 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({ task: text.trim() }),
     });
-
     if (!response.ok) {
       throw new Error('Failed to analyze task');
     }
@@ -75,12 +75,12 @@ export async function PUT(req: NextRequest) {
   try {
     const user = await management.users.get({ id: session.user.sub });
     const todos = user.data.user_metadata?.todos || [];
-    const updatedTodos = todos.map((todo: any) =>
+    const updatedTodos = todos.map((todo: Todo) =>
       todo.id === id ? { ...todo, completed } : todo
     );
 
     // add diamonds for completed todos to user metadata
-    const diamonds = updatedTodos.filter((todo: any) => todo.completed).reduce((acc: number, todo: any) => acc + todo.diamonds, 0);
+    const diamonds = updatedTodos.filter((todo: Todo) => todo.completed).reduce((acc: number, todo: Todo) => acc + todo.diamonds, 0);
 
     await management.users.update({ id: session.user.sub }, { user_metadata: { ...user.data.user_metadata, diamonds: user.data.user_metadata?.diamonds + diamonds, todos: updatedTodos } });
 
@@ -102,7 +102,7 @@ export async function DELETE(req: NextRequest) {
   try {
     const user = await management.users.get({ id: session.user.sub });
     const todos = user.data.user_metadata?.todos || [];
-    const updatedTodos = todos.filter((todo: any) => todo.id !== id);
+    const updatedTodos = todos.filter((todo: Todo) => todo.id !== id);
 
     await management.users.update({ id: session.user.sub }, { user_metadata: { ...user.data.user_metadata, todos: updatedTodos } });
 

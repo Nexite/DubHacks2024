@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ManagementClient } from 'auth0';
 import { auth } from '@/lib/auth';
-import { Session } from 'next-auth';
 
 const management = new ManagementClient({
   domain: process.env.AUTH0_DOMAIN!,
@@ -15,17 +14,8 @@ interface InventoryItem {
   category: string;
 }
 
-interface CustomSession extends Session {
-  user?: {
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
-    sub?: string;
-  };
-}
-
-export async function GET(req: NextRequest) {
-  const session = (await auth()) as CustomSession;
+export async function GET() {
+  const session = (await auth());
   if (!session || !session.user?.sub) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -41,7 +31,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const session = (await auth()) as CustomSession;
+  const session = (await auth());
   if (!session || !session.user?.sub) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -79,7 +69,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-  const session = (await auth()) as CustomSession;
+  const session = (await auth());
   if (!session || !session.user?.sub) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

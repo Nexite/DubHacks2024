@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import Confetti from 'react-confetti';
 
 interface Todo {
     id: number;
@@ -16,6 +17,7 @@ interface TodoListProps {
 
 const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onDeleteTodo }) => {
     const [inputText, setInputText] = useState('');
+    const [showConfetti, setShowConfetti] = useState(false);
 
     const handleAddTodo = () => {
         if (inputText.trim() !== '') {
@@ -24,8 +26,20 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onD
         }
     };
 
+    const handleToggleTodo = useCallback((id: number) => {
+        const todo = todos.find(t => t.id === id);
+        if (todo && !todo.completed) {
+            setShowConfetti(true);
+            setTimeout(() => setShowConfetti(false), 2000);
+        }
+        onToggleTodo(id);
+    }, [todos, onToggleTodo]);
+
+    todos.sort((a, b) => a.completed ? 1 : b.completed ? -1 : 0);
+
     return (
         <div className="bg-white rounded-lg shadow-md p-6">
+            {showConfetti && <Confetti />}
             <h2 className="text-2xl font-bold mb-4 text-gray-800">Todo List</h2>
             <div className="flex mb-4">
                 <input
@@ -48,8 +62,9 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onD
                         <input
                             type="checkbox"
                             checked={todo.completed}
-                            onChange={() => onToggleTodo(todo.id)}
+                            onChange={() => handleToggleTodo(todo.id)}
                             className="mr-2"
+                            disabled={typeof todo.id === 'number' && todo.id > Date.now() - 5000} // Disable for new todos
                         />
                         <span className={`text-gray-800 ${todo.completed ? 'line-through text-gray-500' : ''}`}>
                             {todo.text} (💎 {todo.diamonds})
@@ -57,6 +72,7 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onAddTodo, onToggleTodo, onD
                         <button
                             onClick={() => onDeleteTodo(todo.id)}
                             className="ml-auto bg-red-500 text-white px-2 py-1 rounded"
+                            disabled={typeof todo.id === 'number' && todo.id > Date.now() - 5000} // Disable for new todos
                         >
                             Delete
                         </button>

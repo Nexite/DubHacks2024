@@ -12,23 +12,51 @@ const Rock: React.FC<{ inventory: InventoryItem[]; shopItems: ShopItem[] }> = ({
     
     return (
         <div className="flex-grow relative mb-4">
-            <Image
-                src="/rock.png"
-                alt="A picture of a rock"
-                layout="fill"
-                objectFit="contain"
-                className="rounded-lg"
-            />
-            {equippedItemImages.map((imageUrl, index) => (
+            <div className="rock-container">
                 <Image
-                    key={index}
-                    src={imageUrl || ''}
-                    alt={`Equipped item ${index + 1}`}
+                    src="/rock.png"
+                    alt="A picture of a rock"
                     layout="fill"
                     objectFit="contain"
-                    className="rounded-lg"
+                    className="rounded-lg rock-sway"
                 />
-            ))}
+                {equippedItemImages.map((imageUrl, index) => (
+                    <Image
+                        key={index}
+                        src={imageUrl || ''}
+                        alt={`Equipped item ${index + 1}`}
+                        layout="fill"
+                        objectFit="contain"
+                        className={`rounded-lg ${imageUrl?.includes('eyes') || imageUrl?.includes('mouths') ? 'accessory-bounce' : ''}`}
+                    />
+                ))}
+            </div>
+            <style jsx global>{`
+                @keyframes sway {
+                    0%, 100% { transform: rotate(-1deg); }
+                    50% { transform: rotate(1deg); }
+                }
+                
+                @keyframes bounce {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-1px); }
+                }
+                
+                .rock-container {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    animation: sway 6s ease-in-out infinite;
+                }
+                
+                .rock-sway {
+                    animation: sway 6s ease-in-out infinite;
+                }
+                
+                .accessory-bounce {
+                    animation: bounce 2s ease-in-out infinite;
+                }
+            `}</style>
         </div>
     );
 };
