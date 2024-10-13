@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { ChatOpenAI } from "@langchain/openai";
+import { StructuredOutputParser } from 'langchain/output_parsers';
+import { PromptTemplate } from '@langchain/core/prompts';
+import { z } from 'zod';
 
 export async function POST(req: Request) {
   try {
@@ -17,104 +16,57 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'OpenAI API key is not set' }, { status: 500 });
     }
 
-    console.log('Sending request to OpenAI with task:', task);
+    console.log('Analyzing task:', task);
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: `
-          Evaluate the difficulty of tasks and assign a numerical score based on perceived complexity and time commitment.
-
-          Consider factors like required effort, complexity, skill level, and time required when scoring tasks.
-
-          # Steps
-
-          1. **Analyze the Task**: Determine the nature of the task, considering attributes like effort, complexity, skills required, and the time involved.
-          2. **Assign a Score**: Based on the analysis, assign a difficulty score from 0 to 100, where 0 is least difficult and 100 is most difficult.
-
-          # Output Format
-
-          Provide the output in JSON format, where the task is the key, and the difficulty score is the value, e.g., {"score": score}.
-
-          # Examples
-
-          - Input: "Finish computer science homework"
-            - Output: {"score": 50}
-
-          - Input: "Go grocery shopping"
-            - Output: {"score": 23}
-
-          - Input: "Go on a walk"
-            - Output: {"score": 12}
-
-          - Input: "Learn a new programming language"
-            - Output: {"score": 100}
-
-          - Input: "Learn how to use a new software"
-            - Output: {"score": 73}
-
-          - Input: "Learn how to play the guitar"
-            - Output: {"score": 98}
-
-          - Input: "Call grandma"
-            - Output: {"score": 15}
-
-          - Input: "Put notebook in backpack"
-            - Output: {"score": 3}
-
-          - Input: "Do the dishes"
-            - Output: {"score": 10}
-
-          - Input: "Do the laundry"
-            - Output: {"score": 17}
-
-          # Notes
-
-          Consider edge cases where some tasks may appear simple but require a significant time commitment due to external factors, such as waiting time or preparation. Adjust scores accordingly.
-          `
-        },
-        {
-          role: "user",
-          content: `Analyze this task and give it a difficulty score from 1 to 100: "${task}". Respond with a JSON object containing only a 'score' key and its numeric value.`
-        }
-      ],
-      max_tokens: 60,
-    });
+    const parser = StructuredOutputParser.fromZodSchema(
+      z.object({
+        score: z.number().int().min(1).max(100).describe('The difficulty score of the task'),
+      })
+    );
     
-    const content = completion.choices[0].message.content;
+    const formatInstructions = parser.getFormatInstructions();
+    console.log(formatInstructions);
+    const prompt = new PromptTemplate({
+      template: `
+      Evaluate the difficulty of tasks and assign a numerical score based on perceived complexity and time commitment.
 
-    if (!content) {
-      throw new Error('No content in OpenAI response');
-    }
+      Some examples of tasks and their scores:
+      "Finish computer science homework" - 50
+      "Go grocery shopping" - 23
+      "Go on a walk" - 12
+      "Learn a new programming language" - 100
+      "Learn how to use a new software" - 73
+      "Learn how to play the guitar" - 98
+      "Call grandma" - 15
+      "Put notebook in backpack" - 3
+      "Do the dishes" - 10
+      "Do the laundry" - 17
 
-    let parsedContent;
-    try {
-      parsedContent = JSON.parse(content);
-    } catch (parseError) {
-      console.error('Error parsing OpenAI response:', parseError);
-      const scoreMatch = content.match(/\d+/);
-      if (scoreMatch) {
-        parsedContent = { score: parseInt(scoreMatch[0], 10) };
-      } else {
-        throw new Error('Invalid response format from OpenAI');
-      }
-    }
+      Consider factors like required effort, complexity, skill level, and time required when scoring tasks.
 
-    if (typeof parsedContent.score !== 'number') {
-      throw new Error('Invalid score format in OpenAI response');
-    }
+      {format_instructions}
 
-    const difficultyScore = parsedContent.score;
-    console.log('Difficulty score:', difficultyScore);
+      Task: {task}
 
-    // Ensure the score is within the 1-100 range
-    const normalizedScore = Math.max(1, Math.min(100, difficultyScore));
+      Difficulty score:`,
+      inputVariables: ['task'],
+      partialVariables: { format_instructions: formatInstructions },
+    });
+
+    const model = new ChatOpenAI({ modelName: 'gpt-4o-mini', temperature: 0 });
+
+    const input = await prompt.format({ task });
+    const response = await model.call([
+      { role: 'user', content: input },
+    ]);
+
+    const parsedOutput = await parser.parse(response.content as string);
+    console.log(response.content);
+    console.log('Difficulty score:', parsedOutput.score);
 
     return NextResponse.json({
-      diamonds: normalizedScore,
-      rawResponse: content
+      diamonds: parsedOutput.score,
+      rawResponse: response.content
     });
   } catch (error: unknown) {
     console.error('Error analyzing task:', error);
