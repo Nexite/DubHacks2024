@@ -39,7 +39,7 @@ const Rock: React.FC<{ inventory: InventoryItem[]; shopItems: ShopItem[] }> = ({
                 
                 @keyframes bounce {
                     0%, 100% { transform: translateY(0); }
-                    50% { transform: translateY(-1px); }
+                    50% { transform: translateY(-2px); }
                 }
                 
                 .rock-container {
